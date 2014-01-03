@@ -60,6 +60,15 @@ opt::
 	$(MAKE) -C ocsipersist-dbm opt
 endif
 
+### Arakoon ####
+
+ifeq "$(OCSIPERSISTARAKOON)" "YES"
+byte::
+	$(MAKE) -C ocsipersist-arakoon byte
+opt::
+	$(MAKE) -C ocsipersist-arakoon opt
+endif
+
 ##########
 
 %.cmi: %.mli
@@ -76,6 +85,7 @@ endif
 clean: clean.local
 	${MAKE} -C ocsipersist-dbm clean
 	${MAKE} -C ocsipersist-sqlite clean
+	${MAKE} -C ocsipersist-arakoon clean
 clean.local:
 	-rm -f *.cm[ioax] *.cmxa *.cmxs *.o *.a *.annot
 	-rm -f ${PREDEP}
@@ -83,6 +93,7 @@ distclean: clean.local
 	-rm -f *~ \#* .\#*
 	${MAKE} -C ocsipersist-dbm distclean
 	${MAKE} -C ocsipersist-sqlite distclean
+	${MAKE} -C ocsipersist-arakoon distclean
 
 ## Dependencies
 
@@ -90,6 +101,7 @@ depend: ${PREDEP}
 	$(OCAMLDEP) ${LIBS} *.mli *.ml > .depend
 	${MAKE} -C ocsipersist-dbm depend
 	${MAKE} -C ocsipersist-sqlite depend
+	${MAKE} -C ocsipersist-arakoon depend
 
 FORCE:
 -include .depend

@@ -151,6 +151,15 @@ package "ext" (
     archive(native) = "ocsipersist-sqlite.cmxa"
   )
 
+  package "ocsipersist-arakoon" (
+    exists_if = "ocsipersist-arakoon.cma,ocsipersist-arakoon.cmxa"
+    requires = "arakoon_client"
+    version = "[distributed with Ocsigen server]"
+    description = "Persistent data storage with Arakoon"
+    archive(byte) = "ocsipersist-arakoon.cma"
+    archive(native) = "ocsipersist-arakoon.cmxa"
+  )
+
   package "ocsipersist-dbm" (
     exists_if = "ocsipersist-dbm.cma,ocsipersist-dbm.cmxa"
     version = "[distributed with Ocsigen server]"

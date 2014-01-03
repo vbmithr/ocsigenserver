@@ -81,6 +81,7 @@ set_defaults () {
     with_camlzip=1
     with_dbm=1
     with_preempt=1
+    with_arakoon=1
     prefix="/usr/local"
     bindir=""
     logdir=""
@@ -107,7 +108,7 @@ full_pwd=`pwd`
 
 ## Which options exist? eoptions for enable/disable, woptions for with/without:
 eoptions="debug annot natdynlink"
-woptions="sqlite dbm camlzip preempt"
+woptions="sqlite dbm arakoon camlzip preempt"
 
 print_options () {
 	for opt in $eoptions; do
@@ -185,6 +186,7 @@ usage: ./configure [ options ]
 
   --with-sqlite,	--without-sqlite	Compile ocsipersist with SQLite for persistent storage
   --with-dbm,		--without-dbm		Compile ocsipersist with DBM for persistent storage
+  --with-arakoon,       --without-arakoon       Compile ocsipersist with Arakoon for persistent storage
   --with-camlzip,	--without-camlzip	Compile deflatemod extension, requires camlzip
 
   --name=NAME		The name of the server binary and ocamlfind package.
@@ -441,6 +443,17 @@ if [ "$with_dbm" -gt 0 ]; then
     fi
 fi
 
+# Check arakoon
+if [ "$with_arakoon" -gt 0 ]; then
+    if test_library arakoon_client; then
+	echo -n
+    elif [ "$with_arakoon" -gt 1 ]; then
+	fail_library arakoon_client
+    else
+        with_arakoon=0
+    fi
+fi
+
 # Check Camlzip
 if [ "$with_camlzip" -gt 0 ]; then
     if test_library camlzip; then
@@ -509,6 +522,11 @@ if [ $with_dbm -gt 0 ] ; then
 else
 	with_dbm="NO"
 fi
+if [ $with_arakoon -gt 0 ] ; then
+	with_arakoon="YES"
+else
+	with_arakoon="NO"
+fi
 if [ $with_sqlite -gt 0 ] ; then
 	with_sqlite="YES"
 else
@@ -571,6 +589,9 @@ OCSIPERSISTSQLITE:=$with_sqlite
 
 # Do you want ocsipersist with dbm? YES/NO
 OCSIPERSISTDBM:=$with_dbm
+
+# Do you want ocsipersist with arakoon? YES/NO
+OCSIPERSISTARAKOON:=$with_arakoon
 
 # Do you want preemptive threads ? YES/NO
 PREEMPTIVE:=$with_preempt
