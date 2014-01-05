@@ -65,9 +65,12 @@ let get_nodes (ic,oc) =
   | Nodes ns -> Lwt.return ns
   | _ -> Lwt.fail (Invalid_argument "protocol mismatch")
 
+let manager_ip = ref Unix.inet_addr_loopback
+let manager_port = ref 4444
+
 let with_managed f =
   Lwt_io.with_connection
-    Unix.(ADDR_INET(inet_addr_loopback, 4444))
+    Unix.(ADDR_INET(!manager_ip, !manager_port))
     (fun chans ->
        get_cluster_id chans >>= fun cid ->
        get_nodes chans >>= fun cfgs ->
@@ -165,6 +168,16 @@ let iter_block f t =
 
 (* Initialisation *)
 
-let init_fun xml = ()
+open Simplexmlparser
+let rec init_fun = function
+  | [] -> ()
+  | Element ("ip", _, [PCData ip])::t ->
+    manager_ip := Unix.inet_addr_of_string ip;
+    init_fun t
+  | Element ("port", _, [PCData port])::t ->
+    manager_port := int_of_string port;
+    init_fun t
+  | _ -> raise (Ocsigen_extensions.Error_in_config_file
+                  ("Unexpected content inside Ocsipersist config"))
 
 let _ = Ocsigen_extensions.register_extension ~name:"ocsipersist" ~init_fun ()
