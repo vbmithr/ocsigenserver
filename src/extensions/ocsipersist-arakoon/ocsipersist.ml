@@ -51,17 +51,17 @@ type protocol =
   | Get_nodes
   | Nodename of string
   | Cluster_id of string
-  | Nodes of (string * (string * int)) list
+  | Nodes of (string * (string * int)) list with json
 
 let get_cluster_id (ic,oc) =
-  Lwt_io.write_value oc Get_cluster_id >>= fun () ->
-  Lwt_io.read_value ic >>= function
+  Lwt_io.write oc (Json_protocol.to_string Get_cluster_id) >>= fun () ->
+  Lwt_io.read ic >>= fun s -> match (Json_protocol.from_string s) with
   | Cluster_id cid -> Lwt.return cid
   | _ -> Lwt.fail (Invalid_argument "protocol mismatch")
 
 let get_nodes (ic,oc) =
-  Lwt_io.write_value oc Get_nodes >>= fun () ->
-  Lwt_io.read_value ic >>= function
+  Lwt_io.write oc (Json_protocol.to_string Get_nodes) >>= fun () ->
+  Lwt_io.read ic >>= fun s -> match (Json_protocol.from_string s) with
   | Nodes ns -> Lwt.return ns
   | _ -> Lwt.fail (Invalid_argument "protocol mismatch")
 

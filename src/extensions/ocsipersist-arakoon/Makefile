@@ -4,8 +4,9 @@ PACKAGE  := ${LWT_EXTRA_PACKAGE} \
 	    lwt.unix     \
 	    tyxml.parser \
 	    arakoon_client \
+	    js_of_ocaml.deriving.syntax_tc
 
-LIBS     := -I ../../baselib -I ../../http -I ../../server \
+LIBS     := -I ../../baselib -I ../../http -I ../../server -syntax camlp4o \
 	    ${addprefix -package ,${PACKAGE}}
 OCAMLC   := $(OCAMLFIND) ocamlc${BYTEDBG} ${THREAD}
 OCAMLOPT := $(OCAMLFIND) ocamlopt ${OPTDBG} ${THREAD}
